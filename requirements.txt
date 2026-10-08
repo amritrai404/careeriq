@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+scikit-learn
+pymupdf
+python-dotenv
+joblib
+matplotlib
+seaborn
+pytest
