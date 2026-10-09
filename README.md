@@ -1,3 +1,4 @@
+---
 💼 CareerIQ
 AI-Powered Career Intelligence Platform
 
@@ -305,3 +306,4 @@ Its match scores, predictions, and resume quality estimates are not guarantees o
 Use the generated insights as guidance, alongside human judgment and professional career advice.
 
 <p align="center"> <b>Built with Python, Machine Learning, and a passion for learning. 🚀</b> <br /><br /> ⭐ If you find CareerIQ useful, consider starring the repository! </p>
+---
