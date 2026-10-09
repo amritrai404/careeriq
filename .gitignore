@@ -44,3 +44,14 @@ test*.png
 # Ignore private resumes / user data
 sample_data/*.pdf
 !sample_data/sample_resume.pdf
+
+
+# ---------- ML / Datasets ----------
+data/raw/*.csv
+data/raw/*.zip
+*.pkl
+*.h5
+models/*.pkl
+notebooks/.ipynb_checkpoints/
+data/processed/*.npz
+data/processed/*.csv

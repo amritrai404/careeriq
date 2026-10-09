@@ -3,7 +3,7 @@ CareerIQ - Streamlit Frontend
 -----------------------------
 AI Career Intelligence Platform.
 Upload a resume PDF + paste a job description,
-and CareerIQ will analyze skill alignment.
+and CareerIQ will analyze skill alignment with ML-powered insights.
 """
 
 import streamlit as st
@@ -22,10 +22,16 @@ from app.visualizations import (
     compute_category_coverage,
     plot_category_coverage,
 )
+from app.role_predictor import predict_roles, is_model_available as role_model_ok
+from app.quality_scorer import predict_quality, is_model_available as quality_model_ok
+from app.profile_matcher import (
+    find_similar_profiles,
+    is_model_available as profiles_model_ok,
+)
 
 
 # ---------------------------------------------------------------
-# Page Configuration
+# Page Config
 # ---------------------------------------------------------------
 st.set_page_config(
     page_title="CareerIQ",
@@ -40,14 +46,11 @@ st.set_page_config(
 # ---------------------------------------------------------------
 st.markdown("""
     <style>
-    /* Main container */
     .block-container {
         padding-top: 2rem;
         padding-bottom: 2rem;
         max-width: 1250px;
     }
-
-    /* Hero score card */
     .hero-card {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2.2rem 2rem;
@@ -79,10 +82,7 @@ st.markdown("""
         margin-top: 0.8rem;
         font-weight: 600;
         font-size: 0.95rem;
-        backdrop-filter: blur(10px);
     }
-
-    /* Skill chips */
     .skill-chip {
         display: inline-block;
         padding: 0.35rem 0.85rem;
@@ -92,73 +92,35 @@ st.markdown("""
         margin: 0.2rem 0.25rem 0.2rem 0;
         border: 1px solid;
     }
-    .chip-matched {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border-color: #a5d6a7;
-    }
-    .chip-missing {
-        background: #ffebee;
-        color: #c62828;
-        border-color: #ef9a9a;
-    }
-    .chip-extra {
-        background: #e3f2fd;
-        color: #1565c0;
-        border-color: #90caf9;
-    }
-    .chip-critical {
-        background: #ffebee;
-        color: #b71c1c;
-        border-color: #e57373;
-    }
-    .chip-important {
-        background: #fff8e1;
-        color: #f57f17;
-        border-color: #ffcc80;
-    }
-    .chip-nice {
-        background: #e8f5e9;
-        color: #2e7d32;
-        border-color: #a5d6a7;
-    }
-
-    /* Metric cards */
+    .chip-matched { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
+    .chip-missing { background:#ffebee; color:#c62828; border-color:#ef9a9a; }
+    .chip-extra   { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
+    .chip-critical{ background:#ffebee; color:#b71c1c; border-color:#e57373; }
+    .chip-important{background:#fff8e1; color:#f57f17; border-color:#ffcc80; }
+    .chip-nice    { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
     div[data-testid="stMetric"] {
-        background: #f8f9fa;
-        padding: 1rem 1.2rem;
-        border-radius: 12px;
-        border: 1px solid #e9ecef;
+        background:#f8f9fa; padding:1rem 1.2rem;
+        border-radius:12px; border:1px solid #e9ecef;
     }
-
-    /* Sidebar styling */
-    section[data-testid="stSidebar"] {
-        background: #f8f9fa;
-    }
-
-    /* Headers spacing */
-    h2, h3 {
-        margin-top: 0.6rem !important;
-    }
+    section[data-testid="stSidebar"] { background:#f8f9fa; }
+    h2, h3 { margin-top: 0.6rem !important; }
     </style>
 """, unsafe_allow_html=True)
 
 
 # ---------------------------------------------------------------
-# Helper: render skill chips
+# Helper
 # ---------------------------------------------------------------
 def render_chips(skills, chip_class):
-    """Render a list of skills as inline HTML chips."""
     if not skills:
         return "<em style='color:#999;'>None</em>"
     return "".join(
-        f'<span class="skill-chip {chip_class}">{skill}</span>'
-        for skill in skills
+        f'<span class="skill-chip {chip_class}">{s}</span>' for s in skills
     )
 
 
 # ---------------------------------------------------------------
-# Sidebar — Inputs
+# Sidebar
 # ---------------------------------------------------------------
 with st.sidebar:
     st.title("💼 CareerIQ")
@@ -172,7 +134,6 @@ with st.sidebar:
         type=["pdf"],
         help="Upload your resume in PDF format."
     )
-
     job_description = st.text_area(
         "💼 Paste Job Description",
         height=220,
@@ -186,16 +147,14 @@ with st.sidebar:
     )
 
     st.divider()
-
     st.caption(
         "💡 **Tip:** Paste the full job description "
-        "including requirements and responsibilities "
-        "for the most accurate analysis."
+        "including requirements for best results."
     )
 
 
 # ---------------------------------------------------------------
-# Main Header
+# Header
 # ---------------------------------------------------------------
 st.title("💼 CareerIQ")
 st.write(
@@ -211,42 +170,48 @@ if analyze_clicked:
 
     if resume is None:
         st.warning("⚠️ Please upload your resume first.")
-
     elif not job_description.strip():
         st.warning("⚠️ Please enter a job description.")
-
     else:
         try:
             with st.spinner("🔍 Analyzing your resume..."):
-
-                # ----- Extract resume text -----
                 resume.seek(0)
                 resume_text = extract_text_from_pdf(resume)
 
                 if not resume_text:
                     st.error(
-                        "❌ Could not extract text from this PDF. "
-                        "Please upload a text-based PDF resume."
+                        "❌ Could not extract text from this PDF."
                     )
+                    st.stop()
 
-                else:
-                    # ----- Extract skills -----
-                    resume_skills = extract_skills(resume_text)
-                    jd_skills = extract_skills(job_description)
+                resume_skills = extract_skills(resume_text)
+                jd_skills = extract_skills(job_description)
+                result = match_skills(resume_skills, jd_skills)
+                gap = categorize_missing_skills(
+                    result["missing"], job_description
+                )
 
-                    # ----- Match skills -----
-                    result = match_skills(resume_skills, jd_skills)
+                # ---------- ML: Role Prediction ----------
+                predicted_roles = []
+                if role_model_ok():
+                    predicted_roles = predict_roles(resume_text, top_n=3)
 
-                    # ----- Categorize missing skills -----
-                    gap = categorize_missing_skills(
-                        result["missing"], job_description
+                # ---------- ML: Quality Score ----------
+                quality = {"score": 0.0, "features": {}}
+                if quality_model_ok():
+                    quality = predict_quality(resume_text)
+
+                # ---------- ML: Similar Profiles ----------
+                similar_profiles = []
+                if profiles_model_ok():
+                    similar_profiles = find_similar_profiles(
+                        resume_text, top_n=5
                     )
 
             # =================================================
-            # Hero Score Card
+            # Hero Score
             # =================================================
             score = result["match_score"]
-
             st.markdown(f"""
                 <div class="hero-card">
                     <p class="label">🎯 CAREER MATCH SCORE</p>
@@ -264,7 +229,30 @@ if analyze_clicked:
                 st.metric("📋 Required Skills", result["total_required"])
 
             # =================================================
-            # Matched vs Missing (chips)
+            # ML Insights
+            # =================================================
+            st.divider()
+            st.subheader("🤖 AI-Powered Insights")
+
+            ml_col1, ml_col2 = st.columns(2)
+
+            with ml_col1:
+                st.markdown("**🎯 Predicted Career Roles**")
+                if predicted_roles:
+                    for r in predicted_roles:
+                        st.write(f"• {r['role']} — **{r['confidence']}%**")
+                else:
+                    st.info("Model not available.")
+
+            with ml_col2:
+                st.markdown("**📊 Resume Quality Score**")
+                if quality["score"] > 0:
+                    st.metric("Quality", f"{quality['score']}/100")
+                else:
+                    st.info("Model not available.")
+
+            # =================================================
+            # Matched vs Missing
             # =================================================
             st.divider()
             col_left, col_right = st.columns(2)
@@ -275,7 +263,6 @@ if analyze_clicked:
                     render_chips(result["matched"], "chip-matched"),
                     unsafe_allow_html=True
                 )
-
             with col_right:
                 st.subheader("❌ Missing Skills")
                 st.markdown(
@@ -284,29 +271,26 @@ if analyze_clicked:
                 )
 
             # =================================================
-            # Skill Gap Priority (chips)
+            # Skill Gap Priority
             # =================================================
             if result["missing"]:
                 st.divider()
                 st.subheader("🎯 Skill Gap Priority")
 
-                gap_col1, gap_col2, gap_col3 = st.columns(3)
-
-                with gap_col1:
+                g1, g2, g3 = st.columns(3)
+                with g1:
                     st.markdown("**🔴 Critical**")
                     st.markdown(
                         render_chips(gap["critical"], "chip-critical"),
                         unsafe_allow_html=True
                     )
-
-                with gap_col2:
+                with g2:
                     st.markdown("**🟡 Important**")
                     st.markdown(
                         render_chips(gap["important"], "chip-important"),
                         unsafe_allow_html=True
                     )
-
-                with gap_col3:
+                with g3:
                     st.markdown("**🟢 Nice to Have**")
                     st.markdown(
                         render_chips(gap["nice_to_have"], "chip-nice"),
@@ -319,15 +303,13 @@ if analyze_clicked:
             st.divider()
             st.subheader("📊 Visual Analytics")
 
-            viz_col1, viz_col2 = st.columns(2)
-
-            with viz_col1:
+            viz1, viz2 = st.columns(2)
+            with viz1:
                 fig1 = plot_matched_vs_missing(
                     result["matched"], result["missing"]
                 )
                 st.pyplot(fig1, use_container_width=True)
-
-            with viz_col2:
+            with viz2:
                 coverage = compute_category_coverage(
                     resume_skills, jd_skills
                 )
@@ -338,52 +320,57 @@ if analyze_clicked:
                     st.info("No category data to visualize.")
 
             # =================================================
+            # Similar Profiles (ML)
+            # =================================================
+            if similar_profiles:
+                st.divider()
+                with st.expander("👥 Similar Profiles (ML)"):
+                    st.caption(
+                        "Top 5 most similar resumes from our dataset "
+                        "(based on TF-IDF similarity)."
+                    )
+                    for i, p in enumerate(similar_profiles, 1):
+                        st.write(
+                            f"{i}. **{p['category']}** — "
+                            f"Similarity: {p['similarity']}%"
+                        )
+
+            # =================================================
             # Extracted Skills
             # =================================================
             with st.expander("🔍 View Extracted Skills"):
                 st.write("**Resume Skills:**")
-                if resume_skills:
-                    st.markdown(
-                        render_chips(resume_skills, "chip-extra"),
-                        unsafe_allow_html=True
-                    )
-                else:
-                    st.write("_No skills detected in resume._")
-
+                st.markdown(
+                    render_chips(resume_skills, "chip-extra"),
+                    unsafe_allow_html=True
+                )
                 st.write("**Job Description Skills:**")
-                if jd_skills:
-                    st.markdown(
-                        render_chips(jd_skills, "chip-extra"),
-                        unsafe_allow_html=True
-                    )
-                else:
-                    st.write("_No skills detected in job description._")
+                st.markdown(
+                    render_chips(jd_skills, "chip-extra"),
+                    unsafe_allow_html=True
+                )
 
             # =================================================
-            # Career Recommendations
+            # Recommendations
             # =================================================
             if result["missing"]:
                 st.divider()
                 st.subheader("📚 Career Recommendations")
 
-                rec_tab1, rec_tab2, rec_tab3 = st.tabs([
+                t1, t2, t3 = st.tabs([
                     "🎓 Learning Path",
                     "🛠️ Project Ideas",
                     "📄 Resume Tips",
                 ])
 
-                with rec_tab1:
-                    suggestions = get_learning_suggestions(
-                        result["missing"]
-                    )
-                    for item in suggestions:
+                with t1:
+                    for item in get_learning_suggestions(result["missing"]):
                         st.markdown(
-                            f"**{item['skill']}** "
-                            f"_({item['category']})_"
+                            f"**{item['skill']}** _({item['category']})_"
                         )
                         st.write(f"→ {item['suggestion']}")
 
-                with rec_tab2:
+                with t2:
                     ideas = get_project_ideas(result["missing"])
                     if ideas:
                         for idea in ideas:
@@ -391,9 +378,8 @@ if analyze_clicked:
                     else:
                         st.write("_No project ideas available._")
 
-                with rec_tab3:
-                    tips = get_resume_tips(result["missing"])
-                    for tip in tips:
+                with t3:
+                    for tip in get_resume_tips(result["missing"]):
                         st.write(f"• {tip}")
             else:
                 st.success(
