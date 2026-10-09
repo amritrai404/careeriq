@@ -1,135 +1,122 @@
 💼 CareerIQ
-
 AI-Powered Career Intelligence Platform
 
-CareerIQ analyzes a resume against a target job description to identify skill gaps, measure job alignment, predict suitable career roles, and generate personalized career recommendations.
+<p align="center"> <b>Turn your resume into a smarter career roadmap.</b> <br /> Analyze skills, discover gaps, predict career roles, and get personalized recommendations. </p>
 
-Resume + Job Description → Skill Matching → Match Score → Skill Gaps → Career Recommendations
-📖 Table of Contents
-Problem
-Solution
-Key Features
-ML Techniques
-Architecture
-Tech Stack
-Project Structure
-Getting Started
-Dataset
-Model Training
-Model Performance
-Example Output
-Running Tests
-Future Improvements
-Project Status
-Author
-Acknowledgements
-Disclaimer
-🎯 Problem
+<p align="center"> <img src="https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" /> <img src="https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white" alt="Streamlit" /> <img src="https://img.shields.io/badge/Machine%20Learning-Scikit--learn-F7931E?style=for-the-badge&logo=scikitlearn&logoColor=white" alt="Machine Learning" /> <img src="https://img.shields.io/badge/Status-In%20Development-blue?style=for-the-badge" alt="Project Status" /> </p>
 
-Job seekers often struggle to answer basic but critical questions:
+<p align="center"> <a href="https://github.com/amritrai404/careeriq">Repository</a> • <a href="#-features">Features</a> • <a href="#-installation">Installation</a> • <a href="#-model-performance">Model Performance</a> </p>
 
-How well does my resume match a specific job?
-Which skills am I missing?
-Which career roles best fit my current skill set?
-What should I learn next to become a stronger candidate?
-How can I improve my resume for a target role?
+📌 Overview
 
-Most resume tools focus primarily on formatting or keyword matching. They may not combine skill analysis, ML-based role prediction, personalized recommendations, and visual analytics into a single workflow.
+CareerIQ is an AI-powered career intelligence platform designed to help job seekers understand how well their resumes align with a target job description.
 
-💡 Solution
+It combines resume parsing, skill extraction, machine learning, and personalized recommendations to provide actionable career insights.
 
-CareerIQ takes two inputs:
+Resume + Job Description → Skill Analysis → Match Score → Skill Gaps → Career Roadmap
+✨ Features
 
-A resume in PDF format.
-A target job description in text format.
+<table> <tr> <td width="50%"> <h3>📄 Resume Analysis</h3> Extract text from PDF resumes and identify relevant skills using rule-based NLP techniques. </td> <td width="50%"> <h3>🎯 Job Matching</h3> Compare resume skills against job requirements and calculate a match score. </td> </tr> <tr> <td width="50%"> <h3>🧠 Career Prediction</h3> Predict suitable career categories using a Random Forest classification model. </td> <td width="50%"> <h3>📊 Skill Gap Analysis</h3> Identify missing skills and organize them by priority. </td> </tr> <tr> <td width="50%"> <h3>📈 Resume Quality Scoring</h3> Estimate resume quality using handcrafted features and a regression model. </td> <td width="50%"> <h3>👥 Similar Profiles</h3> Discover similar resumes using clustering and text similarity techniques. </td> </tr> <tr> <td width="50%"> <h3>📚 Career Recommendations</h3> Generate learning suggestions, project ideas, and resume improvement tips. </td> <td width="50%"> <h3>📉 Visual Analytics</h3> Explore matched skills, missing skills, and skill coverage through charts. </td> </tr> </table>
 
-It then generates:
+🎯 The Problem
 
-A job match score from 0–100%.
-Matched and missing skills.
-Skill gap priorities: Critical, Important, and Nice to Have.
-Predicted career roles with confidence scores.
-A resume quality score.
-Similar profiles from a resume dataset.
-Personalized learning paths and project ideas.
-Resume improvement recommendations.
-Visual analytics for skill matching and category-wise coverage.
-✨ Key Features
-Core Analysis — Rule-Based NLP
-📄 Resume Parsing: Extracts text from PDF resumes using PyMuPDF.
-🧠 Skill Extraction: Identifies 121+ skills using a skill dictionary and aliases, such as ml → Machine Learning, k8s → Kubernetes, and sklearn → Scikit-learn.
-🎯 Job Matching: Compares resume skills with job requirements to calculate matched and missing skills.
-📊 Skill Gap Prioritization: Categorizes missing skills into Critical, Important, and Nice to Have based on job description requirements.
-📚 Career Recommendations: Suggests learning resources, project ideas, and resume improvements.
-📈 Visual Analytics: Displays matched versus missing skills and category-wise skill coverage.
-ML-Powered Insights
-🎯 Career Role Prediction: Random Forest Classifier trained on 2,484 labeled resumes across 24 job categories.
-📊 Resume Quality Score: Gradient Boosting Regressor estimates a 0–100 score using eight handcrafted features.
-👥 Similar Profile Discovery: Combines K-Means clustering and TF-IDF cosine similarity to identify similar resumes.
-🧪 ML Techniques Used
-Technique	Purpose
-TF-IDF Vectorization	Converts resume text into numerical features using up to 2,000 features and n-grams.
-Random Forest Classifier	Predicts career roles from resume text.
-Gradient Boosting Regressor	Estimates resume quality scores.
-K-Means Clustering	Groups resumes into 10 clusters.
-Truncated SVD	Reduces the dimensionality of sparse TF-IDF features to 50 components.
-Cosine Similarity	Measures similarity between resume vectors.
-Feature Scaling	Prepares numerical features for model training where appropriate.
-Stratified Train/Test Split	Preserves class distribution during evaluation.
-Class Weight Balancing	Helps address class imbalance during classification.
-Feature Importance Analysis	Identifies features that influence model predictions.
-🏗️ Architecture
-                       💼 CareerIQ
-                            |
-                +-----------+-----------+
-                |                       |
-           Resume PDF             Job Description
-                |                       |
-          PDF Extraction           Text Processing
-                |                       |
-          Skill Extraction       Skill Extraction
-                +-----------+-----------+
-                            |
-                     Skill Matching
-                            |
-                +-----------+-----------+
-                |                       |
-           Matched Skills          Missing Skills
-                |                       |
-                +-----------+-----------+
-                            |
-                       Match Score
-                            |
-          +-----------------+-----------------+
-          |                 |                 |
-    Role Prediction    Quality Score    Similar Profiles
-         (RF)              (GBR)             (K-Means)
-          |                 |                 |
-          +-----------------+-----------------+
-                            |
-                Career Recommendations
-                            |
-                   Visual Analytics
+Job seekers frequently face questions such as:
 
+How closely does my resume match a particular job?
+Which important skills am I missing?
+Which career categories align with my current skill set?
+What should I learn next?
+How can I improve my resume for a specific opportunity?
+
+Traditional resume tools often focus on formatting or basic keyword matching.
+
+CareerIQ aims to bring these insights together in one workflow.
+
+💡 How It Works
+flowchart TD
+    A[Resume PDF] --> C[Text Extraction]
+    B[Job Description] --> D[JD Processing]
+    C --> E[Skill Extraction]
+    D --> F[Required Skills]
+    E --> G[Skill Matching]
+    F --> G
+    G --> H[Match Score]
+    G --> I[Missing Skills]
+    C --> J[ML Role Prediction]
+    C --> K[Resume Quality Scoring]
+    C --> L[Similar Profile Discovery]
+    H --> M[Career Insights]
+    I --> M
+    J --> M
+    K --> M
+    L --> M
+    M --> N[Recommendations and Visualizations]
+
+Workflow
+Upload: Provide a resume in PDF format.
+Analyze: Extract resume text and identify skills.
+Compare: Match extracted skills against job requirements.
+Predict: Use trained ML models for career role prediction and quality estimation.
+Recommend: Display skill gaps, learning suggestions, and resume improvement tips.
+🧪 Machine Learning Techniques
+Technique	Application
+TF-IDF Vectorization	Converts resume text into numerical features
+Random Forest Classifier	Predicts career categories
+Gradient Boosting Regressor	Estimates resume quality scores
+K-Means Clustering	Groups similar resume profiles
+Truncated SVD	Reduces dimensionality of sparse text features
+Cosine Similarity	Measures similarity between resume vectors
+Stratified Train/Test Split	Maintains class distribution during evaluation
+Feature Importance	Helps interpret classification predictions
+📊 Model Performance
+Career Role Classification
+
+The following figures are the reported experimental results and should be verified against the training notebook before publication.
+
+<p align="center"> <img src="https://img.shields.io/badge/Reported%20Accuracy-74.25%25-success?style=for-the-badge" alt="Reported Accuracy: 74.25%" /> <img src="https://img.shields.io/badge/Job%20Categories-24-blue?style=for-the-badge" alt="24 Job Categories" /> <img src="https://img.shields.io/badge/TF--IDF%20Features-2000-orange?style=for-the-badge" alt="2000 TF-IDF Features" /> </p>
+
+Metric	Reported Result
+Accuracy	74.25%
+Macro F1 Score	0.6913
+Weighted F1 Score	0.7260
+Training Samples	1,987
+Test Samples	497
+Job Categories	24
+Resume Quality Scoring
+Metric	Reported Result
+Model	Gradient Boosting Regressor
+MAE	0.46
+R² Score	0.9931
+Input Features	8
+
+Note: Resume quality metrics should be interpreted in the context of how the target score was generated and evaluated. These values do not establish real-world hiring success.
+
+Similar Profile Discovery
+Component	Configuration
+Clustering Algorithm	K-Means
+Number of Clusters	10
+Dimensionality Reduction	Truncated SVD
+SVD Components	50
+Similarity Metric	Cosine Similarity
 🛠️ Tech Stack
-Category	Technology
-Programming Language	Python 3.13
-User Interface	Streamlit
-PDF Processing	PyMuPDF (fitz)
-Data Manipulation	Pandas, NumPy
+
+<p> <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python" /> <img src="https://img.shields.io/badge/Pandas-150458?style=flat-square&logo=pandas&logoColor=white" alt="Pandas" /> <img src="https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white" alt="NumPy" /> <img src="https://img.shields.io/badge/Scikit--learn-F7931E?style=flat-square&logo=scikitlearn&logoColor=white" alt="Scikit-learn" /> <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" alt="Streamlit" /> <img src="https://img.shields.io/badge/Jupyter-F37626?style=flat-square&logo=jupyter&logoColor=white" alt="Jupyter" /> <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" alt="Git" /> </p>
+
+Category	Tools
+Language	Python
+Interface	Streamlit
+Data Processing	Pandas, NumPy
 Machine Learning	Scikit-learn
-NLP	TF-IDF Vectorization
-ML Models	Random Forest, Gradient Boosting, K-Means, Truncated SVD
+PDF Parsing	PyMuPDF
 Visualization	Matplotlib, Seaborn
 Model Persistence	Joblib
 Testing	Pytest
-Version Control	Git and GitHub
-Development	Jupyter Notebooks
+Development	VS Code, Jupyter Notebook
+Version Control	Git, GitHub
 📁 Project Structure
 careeriq/
 │
 ├── app/
-│   ├── __init__.py
 │   ├── resume_parser.py
 │   ├── skill_extractor.py
 │   ├── skill_matcher.py
@@ -142,7 +129,6 @@ careeriq/
 │   └── profile_matcher.py
 │
 ├── data/
-│   ├── __init__.py
 │   ├── skills.py
 │   ├── raw/
 │   │   └── resumes.csv
@@ -165,7 +151,6 @@ careeriq/
 │   └── 05_similar_profiles.ipynb
 │
 ├── tests/
-│   ├── __init__.py
 │   ├── test_resume_parser.py
 │   ├── test_skill_extractor.py
 │   ├── test_skill_matcher.py
@@ -177,14 +162,12 @@ careeriq/
 ├── .gitignore
 └── README.md
 
-
-Note: The structure above represents the intended project layout. Ensure that the listed files and models exist in your repository before publishing this documentation.
-
-🚀 Getting Started
+Ensure this structure matches the files actually present in your repository. Raw datasets and trained model files may be excluded from version control.
+🚀 Installation
 Prerequisites
-Python 3.11 or newer.
-Git.
-A code editor such as VS Code.
+Python 3.11 or newer
+Git
+VS Code or another Python editor
 1. Clone the Repository
 git clone https://github.com/amritrai404/careeriq.git
 cd careeriq
@@ -197,7 +180,7 @@ python -m venv .venv
 .venv\Scripts\Activate.ps1
 
 
-Linux/macOS
+Linux / macOS
 
 python -m venv .venv
 source .venv/bin/activate
@@ -208,225 +191,117 @@ pip install -r requirements.txt
 
 4. Download the Dataset
 
-Download the resume dataset from Kaggle:
+Download the dataset from Kaggle:
 
-Resume Dataset — Kaggle
+📥 Resume Dataset — Kaggle
 
-Place the downloaded CSV file at:
+Place the CSV file in the location expected by your project:
 
 data/raw/resumes.csv
 
 
-Make sure the filename and column names match what the project code expects.
+Check that the filename and column names match the code.
 
-Note: Whether the dataset is required at runtime depends on how the similar-profile feature and model-loading pipeline are implemented.
-
-5. Run the Application
+5. Launch CareerIQ
 streamlit run streamlit_app.py
 
 
-Open the local URL displayed in your terminal, typically:
+Open the local URL shown in your terminal, usually:
 
 http://localhost:8501
 
-📊 Dataset
+📚 Dataset
 
-Source: Resume Dataset by Snehaan Bhawal
+Source: Kaggle Resume Dataset
 
-Property	Value
+Property	Details
 Total Resumes	2,484
 Job Categories	24
-Columns	ID, Resume_str, Resume_html, Category
-Class Distribution	Imbalanced
-License	Verify the dataset's current license before redistribution.
-
-The categories include:
+Text Columns	Resume_str, Resume_html
+Target Column	Category
+Identifier	ID
+Categories
 
 HR, Designer, Information Technology, Teacher, Advocate, Business Development, Healthcare, Fitness, Agriculture, BPO, Sales, Consultant, Digital Media, Automobile, Chef, Finance, Apparel, Engineering, Accountant, Construction, Public Relations, Banking, Arts, and Aviation.
 
+Dataset note: Review the source's current licensing terms before redistributing the dataset or including its contents in a public repository.
+
 🔬 Model Training
 
-The machine learning experiments are organized into Jupyter notebooks.
+Model development and experimentation are organized into Jupyter notebooks.
 
-Notebook	Purpose	Expected Output
-01_eda.ipynb	Exploratory Data Analysis and skill feature extraction	features.npz
-02_role_classifier.ipynb	Baseline role classification using skill features	Baseline classifier
-03_tfidf_classifier.ipynb	TF-IDF-based role classification	Role classifier
-04_quality_scorer.ipynb	Resume quality score modeling	Quality regressor
-05_similar_profiles.ipynb	Clustering and dimensionality reduction	Clustering model and SVD
+Notebook	Description
+01_eda.ipynb	Exploratory data analysis and skill feature extraction
+02_role_classifier.ipynb	Baseline role classifier
+03_tfidf_classifier.ipynb	TF-IDF-based role classification
+04_quality_scorer.ipynb	Resume quality scoring
+05_similar_profiles.ipynb	Clustering and dimensionality reduction
 
-Run the notebooks in the appropriate order, ensuring that each notebook's dependencies and output paths are satisfied.
+Run notebooks in the correct order, ensuring the required datasets and dependencies are available.
 
-Reproducibility note: Training time and model outputs depend on the hardware, dataset, random seeds, and implementation. Run the notebooks to verify the actual results.
+📌 Project Roadmap
+Feature	Status
+Resume PDF Parsing	Verify current implementation
+Skill Extraction	Verify current implementation
+Job Description Matching	Verify current implementation
+Skill Gap Prioritization	Verify current implementation
+Career Recommendations	Verify current implementation
+Visual Analytics	Verify current implementation
+ML Role Classification	Reported experimental result
+Resume Quality Scoring	Verify evaluation
+Similar Profile Discovery	Verify current implementation
+LLM-Powered Guidance	Planned
+FastAPI Backend	Planned
+Docker Deployment	Planned
+Multilingual Resume Support	Planned
+🔮 Future Improvements
+Semantic matching using Sentence-BERT embeddings.
+LLM-powered personalized career guidance.
+Multilingual resume analysis.
+OCR support for scanned PDFs.
+Resume comparison and bulk analysis.
+Analysis history using SQLite or PostgreSQL.
+FastAPI endpoints for integration.
+Docker-based deployment.
+An expanded skill database.
+Better model calibration and explainability.
+🧪 Testing
 
-🎯 Model Performance
-Career Role Classifier — Random Forest
-
-The following metrics are reported project results and should be confirmed by running the evaluation notebook.
-
-Metric	Reported Value
-Accuracy	74.25%
-Macro F1 Score	0.6913
-Weighted F1 Score	0.7260
-Training Samples	1,987
-Test Samples	497
-TF-IDF Features	2,000
-Number of Classes	24
-Per-Category F1 Scores
-Category	F1 Score
-Construction	0.89
-Designer	0.89
-Chef	0.83
-Accountant	0.81
-HR	0.81
-Resume Quality Scorer — Gradient Boosting
-Metric	Reported Value
-Mean Absolute Error (MAE)	0.46
-R² Score	0.9931
-Training Samples	1,987
-Input Features	8
-
-The handcrafted features include:
-
-Word count.
-Unique word ratio.
-Skill count.
-Action verb count.
-Number count.
-Section count.
-Average word length.
-Capitalized word ratio.
-
-Important: These metrics describe the reported experimental results. The quality scorer's MAE and R² are meaningful only when the target score is independently defined and evaluated against a suitable held-out dataset.
-
-Similar Profile Discovery — K-Means and SVD
-Metric	Reported Value
-Number of Clusters	10
-SVD Components	50
-Explained Variance	33.55%
-Similarity Metric	Cosine Similarity
-📊 Example Output
-
-The following is an illustrative example of the kind of output CareerIQ may generate. Values are examples and are not guaranteed predictions from a trained model.
-
-Example input
-
-Resume skills: Python, SQL, Pandas.
-Required job skills: Python, SQL, Pandas, AWS, Docker.
-Career Match Score: 60%
-Status: Moderate Match
-
-AI-Powered Insights
-
-Predicted Career Roles:
-  - Engineering
-  - Consultant
-  - Information Technology
-
-Resume Quality Score: 78.5/100
-
-Matched Skills:
-  - Python
-  - SQL
-  - Pandas
-
-Missing Skills:
-  - AWS
-  - Docker
-
-Skill Gap Priority:
-  - Critical: AWS
-  - Important: Docker
-  - Nice to Have: None
-
-Similar Profiles:
-  - Information Technology
-  - Engineering
-  - Consultant
-
-Career Recommendations:
-
-Learning Path:
-  - Learn AWS Cloud Practitioner fundamentals.
-  - Practice Dockerizing a Python application.
-
-Project Ideas:
-  - Deploy a Dockerized application to a cloud provider.
-
-Resume Tips:
-  - Highlight relevant cloud deployment experience.
-  - Include containerized projects and Dockerfiles.
-
-
-The match score depends on the actual matching formula. For example, three matched skills out of five required skills produce a 60% score if every required skill has equal weight.
-
-🧪 Running Tests
-
-Run the test suite with:
+Run the test suite:
 
 pytest -v
 
 
-The test suite is intended to cover:
+Tests are intended to cover:
 
-PDF text extraction and invalid inputs.
-Case-insensitive skill extraction and aliases.
+PDF text extraction.
+Skill extraction and aliases.
+Case-insensitive matching.
 Duplicate handling and word boundaries.
-Matched, missing, and extra skills.
-Empty-input handling.
-Skill gap priority categorization.
-Career recommendations and project suggestions.
+Matched and missing skill identification.
+Empty inputs and invalid files.
+Skill gap prioritization.
+Recommendation generation.
 
-The actual number of passing tests and execution time will depend on the current test suite and environment.
+The actual test results depend on the current code and environment.
 
-🔮 Future Improvements
-Semantic Similarity: Integrate Sentence-BERT embeddings for deeper text understanding.
-LLM-Powered Guidance: Generate personalized career advice using an LLM.
-Multilingual Support: Analyze resumes in multiple languages.
-Analysis History: Store previous analyses using SQLite or PostgreSQL.
-FastAPI Backend: Expose analysis functionality through REST APIs.
-Docker Deployment: Containerize the application for easier deployment.
-Expanded Skill Database: Add more skills, aliases, and job-specific competencies.
-OCR Support: Process scanned PDF resumes.
-Bulk Resume Analysis: Support recruiter workflows for comparing multiple candidates.
-Model Calibration: Improve the reliability of classification confidence estimates.
-Explainable AI: Show which skills and text features influence predictions.
-📌 Project Status
-
-CareerIQ — Resume Analysis and Career Intelligence
-
-The following table represents the intended feature scope. Update the status based on what is implemented and tested in the current repository.
-
-Component	Status
-PDF Parsing	Verify implementation
-Skill Extraction	Verify implementation
-Skill Matching	Verify implementation
-Skill Gap Prioritization	Verify implementation
-Career Recommendations	Verify implementation
-Visual Analytics	Verify implementation
-Career Role Prediction	Reported experimental result: 74.25% accuracy
-Resume Quality Scoring	Verify evaluation
-Similar Profile Discovery	Verify implementation
-LLM Integration	Planned
-FastAPI Backend	Planned
-Docker Deployment	Planned
-👤 Author
+👨‍💻 Author
 
 Amrit Rai
 
-GitHub: @amritrai404
-Project Repository: CareerIQ
+<p> <a href="https://github.com/amritrai404"> <img src="https://img.shields.io/badge/GitHub-amritrai404-181717?style=for-the-badge&logo=github" alt="GitHub Profile" /> </a> <a href="https://github.com/amritrai404/careeriq"> <img src="https://img.shields.io/badge/Project-CareerIQ-2ea44f?style=for-the-badge&logo=github" alt="CareerIQ Repository" /> </a> </p>
+
 🙏 Acknowledgements
-Kaggle Resume Dataset
-Streamlit
-Scikit-learn
-PyMuPDF
+Kaggle — Resume dataset.
+Streamlit — Web application framework.
+Scikit-learn — Machine learning tools.
+PyMuPDF — PDF text extraction.
 ⚠️ Disclaimer
 
-CareerIQ is intended as a career-assistance and educational tool.
+CareerIQ is designed for educational and career-assistance purposes.
 
-Its scores and predictions should not be interpreted as guaranteed hiring outcomes or professional employment decisions. Classification accuracy reflects performance on a particular dataset and evaluation setup; it does not guarantee equivalent performance on real-world resumes.
+Its match scores, predictions, and resume quality estimates are not guarantees of hiring success. Model performance depends on the training dataset, evaluation methodology, and quality of input data.
 
-Resume quality scores are estimates based on the implemented features and scoring methodology. Users should combine automated insights with human judgment and advice from qualified career professionals.
+Use the generated insights as guidance, alongside human judgment and professional career advice.
 
-⭐ If you find this project useful, consider giving the repository a star!
+<p align="center"> <b>Built with Python, Machine Learning, and a passion for learning. 🚀</b> <br /><br /> ⭐ If you find CareerIQ useful, consider starring the repository! </p>
