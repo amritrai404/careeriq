@@ -22,8 +22,14 @@ from app.visualizations import (
     compute_category_coverage,
     plot_category_coverage,
 )
-from app.role_predictor import predict_roles, is_model_available as role_model_ok
-from app.quality_scorer import predict_quality, is_model_available as quality_model_ok
+from app.role_predictor import (
+    predict_roles,
+    is_model_available as role_model_ok,
+)
+from app.quality_scorer import (
+    predict_quality,
+    is_model_available as quality_model_ok,
+)
 from app.profile_matcher import (
     find_similar_profiles,
     is_model_available as profiles_model_ok,
@@ -92,12 +98,12 @@ st.markdown("""
         margin: 0.2rem 0.25rem 0.2rem 0;
         border: 1px solid;
     }
-    .chip-matched { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
-    .chip-missing { background:#ffebee; color:#c62828; border-color:#ef9a9a; }
-    .chip-extra   { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
-    .chip-critical{ background:#ffebee; color:#b71c1c; border-color:#e57373; }
-    .chip-important{background:#fff8e1; color:#f57f17; border-color:#ffcc80; }
-    .chip-nice    { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
+    .chip-matched  { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
+    .chip-missing  { background:#ffebee; color:#c62828; border-color:#ef9a9a; }
+    .chip-extra    { background:#e3f2fd; color:#1565c0; border-color:#90caf9; }
+    .chip-critical { background:#ffebee; color:#b71c1c; border-color:#e57373; }
+    .chip-important{ background:#fff8e1; color:#f57f17; border-color:#ffcc80; }
+    .chip-nice     { background:#e8f5e9; color:#2e7d32; border-color:#a5d6a7; }
     div[data-testid="stMetric"] {
         background:#f8f9fa; padding:1rem 1.2rem;
         border-radius:12px; border:1px solid #e9ecef;
@@ -179,9 +185,7 @@ if analyze_clicked:
                 resume_text = extract_text_from_pdf(resume)
 
                 if not resume_text:
-                    st.error(
-                        "❌ Could not extract text from this PDF."
-                    )
+                    st.error("❌ Could not extract text from this PDF.")
                     st.stop()
 
                 resume_skills = extract_skills(resume_text)
@@ -191,17 +195,17 @@ if analyze_clicked:
                     result["missing"], job_description
                 )
 
-                # ---------- ML: Role Prediction ----------
+                # ML: Role Prediction
                 predicted_roles = []
                 if role_model_ok():
                     predicted_roles = predict_roles(resume_text, top_n=3)
 
-                # ---------- ML: Quality Score ----------
+                # ML: Quality Score
                 quality = {"score": 0.0, "features": {}}
                 if quality_model_ok():
                     quality = predict_quality(resume_text)
 
-                # ---------- ML: Similar Profiles ----------
+                # ML: Similar Profiles
                 similar_profiles = []
                 if profiles_model_ok():
                     similar_profiles = find_similar_profiles(
@@ -322,9 +326,9 @@ if analyze_clicked:
             # =================================================
             # Similar Profiles (ML)
             # =================================================
-            if similar_profiles:
-                st.divider()
-                with st.expander("👥 Similar Profiles (ML)"):
+            st.divider()
+            with st.expander("👥 Similar Profiles (ML)"):
+                if similar_profiles:
                     st.caption(
                         "Top 5 most similar resumes from our dataset "
                         "(based on TF-IDF similarity)."
@@ -334,6 +338,13 @@ if analyze_clicked:
                             f"{i}. **{p['category']}** — "
                             f"Similarity: {p['similarity']}%"
                         )
+                else:
+                    st.info(
+                        "Similar profiles feature is available in "
+                        "local deployment only. It requires the full "
+                        "resume dataset (56 MB), which is not pushed "
+                        "to GitHub to keep the repository lightweight."
+                    )
 
             # =================================================
             # Extracted Skills
