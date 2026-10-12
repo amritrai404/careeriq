@@ -3,7 +3,7 @@
 **CareerIQ** is an AI-powered career intelligence platform that analyzes a resume against a target job description to identify skill gaps, predict suitable career roles, and provide personalized career recommendations.
 
 **GitHub Repository:** [CareerIQ Repo](https://github.com/amritrai404/careeriq)  
-**Live Demo:** https://careeriq-amrit.streamlit.app/
+**Live Demo:** [CareerIQ LIVE](https://careeriq-amrit.streamlit.app/)
 
 ---
 
